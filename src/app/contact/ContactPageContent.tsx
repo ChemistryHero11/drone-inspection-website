@@ -49,6 +49,16 @@ export default function ContactPageContent() {
 
       if (!response.ok) throw new Error('Request failed');
       setSubmitStatus('success');
+
+      setFormData({
+        company: '',
+        email: '',
+        location: '',
+        details: '',
+      });
+      setSelectedType(null);
+      setSelectedTimeframe(null);
+      setSelectedBudget(null);
     } catch (error) {
       console.error(error);
       setSubmitStatus('error');

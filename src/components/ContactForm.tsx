@@ -58,6 +58,16 @@ export default function ContactForm() {
       }
 
       setSubmitStatus('success');
+
+      setFormData({
+        company: '',
+        email: '',
+        location: '',
+        details: '',
+      });
+      setSelectedType(null);
+      setSelectedTimeframe(null);
+      setSelectedBudget(null);
     } catch (error) {
       console.error(error);
       setSubmitStatus('error');
@@ -130,16 +140,6 @@ export default function ContactForm() {
                 </button>
               ))}
             </div>
-            {submitStatus === 'success' && (
-              <p className="mt-3 text-xs font-mono text-emerald-400/80">
-                Request sent. This mission brief has been delivered to the owner.
-              </p>
-            )}
-            {submitStatus === 'error' && (
-              <p className="mt-3 text-xs font-mono text-red-400/80">
-                Something went wrong sending your request. Please try again or reach out directly.
-              </p>
-            )}
           </motion.div>
 
           {/* Budget Filtering */}
@@ -289,8 +289,21 @@ export default function ContactForm() {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-col sm:flex-row sm:justify-end"
+            className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
           >
+            {submitStatus !== 'idle' && (
+              <p
+                className={`text-xs font-mono ${
+                  submitStatus === 'success'
+                    ? 'text-emerald-400/80'
+                    : 'text-red-400/80'
+                }`}
+              >
+                {submitStatus === 'success'
+                  ? 'Request sent. This mission brief has been delivered to the owner.'
+                  : 'Something went wrong sending your request. Please try again or reach out directly.'}
+              </p>
+            )}
             <button
               type="submit"
               disabled={isSubmitting}
