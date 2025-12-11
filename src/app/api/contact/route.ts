@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const to = 'nich_in_uscg@hotmail.com';
+    const to = 'jhoneck82@gmail.com';
     const subject = 'New mission request from SkyHigh Imaging website';
 
     const html = `
