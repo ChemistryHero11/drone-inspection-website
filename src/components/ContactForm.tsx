@@ -98,7 +98,7 @@ export default function ContactForm() {
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             <label className="block text-xs font-mono uppercase tracking-[0.2em] text-foreground/40 mb-6">
-              // Project Classification
+              {"// Project Classification"}
             </label>
             <div className="grid grid-cols-1 xs:grid-cols-3 sm:grid-cols-3 gap-3 sm:gap-4">
               {projectTypes.map((type) => (
@@ -149,7 +149,7 @@ export default function ContactForm() {
             transition={{ duration: 0.6, delay: 0.25 }}
           >
             <label className="block text-xs font-mono uppercase tracking-[0.2em] text-foreground/40 mb-6">
-              // Project_Budget (USD)
+              {"// Project_Budget (USD)"}
             </label>
             <div className="grid grid-cols-1 xs:grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3">
               {budgetRanges.map((range) => (
@@ -181,7 +181,7 @@ export default function ContactForm() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <label className="block text-xs font-mono uppercase tracking-[0.2em] text-foreground/40 mb-6">
-              // Mission Timeframe
+              {"// Mission Timeframe"}
             </label>
             <div className="flex flex-wrap gap-2 sm:gap-3">
               {timeframes.map((tf) => (
@@ -211,7 +211,7 @@ export default function ContactForm() {
             {/* Company */}
             <div className="space-y-2">
               <label className="block text-xs font-mono uppercase tracking-[0.2em] text-foreground/40">
-                // Company_Name
+                {"// Company_Name"}
               </label>
               <input
                 type="text"
@@ -225,7 +225,7 @@ export default function ContactForm() {
             {/* Email */}
             <div className="space-y-2">
               <label className="block text-xs font-mono uppercase tracking-[0.2em] text-foreground/40">
-                // Contact_Email
+                {"// Contact_Email"}
               </label>
               <input
                 type="email"
@@ -239,7 +239,7 @@ export default function ContactForm() {
             {/* Location */}
             <div className="space-y-2 md:col-span-2">
               <label className="block text-xs font-mono uppercase tracking-[0.2em] text-foreground/40">
-                // Site_Coordinates
+                {"// Site_Coordinates"}
               </label>
               <input
                 type="text"
@@ -253,7 +253,7 @@ export default function ContactForm() {
             {/* Details */}
             <div className="space-y-2 md:col-span-2">
               <label className="block text-xs font-mono uppercase tracking-[0.2em] text-foreground/40">
-                // Mission_Brief
+                {"// Mission_Brief"}
               </label>
               <textarea
                 value={formData.details}
@@ -273,7 +273,7 @@ export default function ContactForm() {
             className="border border-white/5 rounded-xl px-4 py-4 md:px-6 md:py-5 bg-white/[0.01]"
           >
             <p className="text-xs font-mono uppercase tracking-[0.2em] text-foreground/40 mb-3">
-              // Not a fit for
+              {"// Not a fit for"}
             </p>
             <ul className="space-y-1 text-xs md:text-sm text-foreground/45">
               {leadFiltering.excludedJobTypes.map((item) => (
