@@ -164,18 +164,6 @@ export default function HeroSection() {
       </div>
 
       {/* Corner Decorations */}
-      <div className="absolute top-4 left-4 sm:top-8 sm:left-8 z-10">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
-          className="font-display text-2xl font-bold tracking-tight"
-        >
-          {brand.shortName}
-          <span className="text-safety-orange">.</span>
-        </motion.div>
-      </div>
-
       <div className="absolute top-4 right-4 sm:top-8 sm:right-8 z-10 hidden md:block">
         <motion.div
           initial={{ opacity: 0, x: 20 }}
