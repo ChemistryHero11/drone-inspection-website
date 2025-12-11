@@ -156,6 +156,13 @@ body::before {
   }
 }
 
+/* Custom cursor - hide default cursor on desktop */
+@media (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
 ::selection {
   background: rgba(255, 77, 0, 0.3);
   color: #fff;

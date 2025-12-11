@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 export default function CustomCursor() {
+  const [isMounted, setIsMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const [hasPointer, setHasPointer] = useState(false);
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
@@ -14,9 +16,15 @@ export default function CustomCursor() {
   const cursorYSpring = useSpring(cursorY, springConfig);
 
   useEffect(() => {
+    setIsMounted(true);
+    
     // Only show on devices with fine pointer (mouse)
-    const hasPointer = window.matchMedia('(pointer: fine)').matches;
-    if (!hasPointer) return;
+    const pointerCheck = window.matchMedia('(pointer: fine)').matches;
+    setHasPointer(pointerCheck);
+    if (!pointerCheck) return;
+
+    // Hide default cursor when custom cursor is active
+    document.body.style.cursor = 'none';
 
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX);
@@ -46,6 +54,7 @@ export default function CustomCursor() {
     document.body.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
+      document.body.style.cursor = '';
       window.removeEventListener('mousemove', moveCursor);
       window.removeEventListener('mousemove', handleElementHover);
       document.body.removeEventListener('mouseenter', handleMouseEnter);
@@ -53,8 +62,8 @@ export default function CustomCursor() {
     };
   }, [cursorX, cursorY]);
 
-  // Don't render on touch devices
-  if (typeof window !== 'undefined' && !window.matchMedia('(pointer: fine)').matches) {
+  // Don't render until mounted (prevents SSR hydration mismatch)
+  if (!isMounted || !hasPointer) {
     return null;
   }
 
@@ -62,7 +71,7 @@ export default function CustomCursor() {
     <>
       {/* Outer glow ring */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference hidden md:block"
+        className="fixed top-0 left-0 pointer-events-none z-[10001] mix-blend-difference hidden md:block"
         style={{
           x: cursorXSpring,
           y: cursorYSpring,
@@ -83,7 +92,7 @@ export default function CustomCursor() {
 
       {/* Inner dot */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999] hidden md:block"
+        className="fixed top-0 left-0 pointer-events-none z-[10001] hidden md:block"
         style={{
           x: cursorX,
           y: cursorY,
