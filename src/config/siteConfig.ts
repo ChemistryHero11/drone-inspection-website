@@ -38,7 +38,7 @@ export const siteConfig = {
       'Advanced drone inspection services for commercial construction, industrial facilities, and infrastructure projects.',
     badge: 'FAA Part 107 Certified',
     video: {
-      src: '/placeholder-video.mp4',
+      src: '/DroneInspectionSiteCinematicHero.mp4',
       poster: '/placeholder-poster.jpg',
     },
   },

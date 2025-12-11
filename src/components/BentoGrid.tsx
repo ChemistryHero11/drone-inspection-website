@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Building2, Thermometer, Scan, Home, ArrowUpRight } from 'lucide-react';
+import { siteConfig } from '@/config/siteConfig';
 
 interface BentoItemProps {
   title: string;
@@ -61,7 +62,7 @@ function BentoItem({
               video.currentTime = 0;
             }}
           >
-            <source src="/placeholder-video.mp4" type="video/mp4" />
+            <source src={siteConfig.hero.video.src} type="video/mp4" />
           </video>
         </div>
       )}

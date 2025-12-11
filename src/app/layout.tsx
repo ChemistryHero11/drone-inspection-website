@@ -2,6 +2,13 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import LenisProvider from "@/components/LenisProvider";
+import Preloader from "@/components/Preloader";
+import CustomCursor from "@/components/CustomCursor";
+import NoiseOverlay from "@/components/NoiseOverlay";
+import ScrollProgress from "@/components/ScrollProgress";
+import Navigation from "@/components/Navigation";
+import StickyCTA from "@/components/StickyCTA";
+import PageTransition from "@/components/PageTransition";
 
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
@@ -23,8 +30,16 @@ export default function RootLayout({
   return (
     <html lang="en" className="lenis lenis-smooth">
       <body className={`${geistMono.variable} antialiased bg-background text-foreground`}>
+        <Preloader />
+        <CustomCursor />
+        <NoiseOverlay />
+        <ScrollProgress />
+        <Navigation />
+        <StickyCTA />
         <LenisProvider>
-          {children}
+          <PageTransition>
+            {children}
+          </PageTransition>
         </LenisProvider>
       </body>
     </html>

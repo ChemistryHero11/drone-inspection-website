@@ -28,18 +28,42 @@ export default function ContactForm() {
     location: '',
     details: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({
-      ...formData,
-      projectType: selectedType,
-      timeframe: selectedTimeframe,
-      budgetRange: selectedBudget,
-    });
+    setSubmitStatus('idle');
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          projectType: selectedType,
+          timeframe: selectedTimeframe,
+          budgetRange: selectedBudget,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Request failed');
+      }
+
+      setSubmitStatus('success');
+    } catch (error) {
+      console.error(error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -106,6 +130,16 @@ export default function ContactForm() {
                 </button>
               ))}
             </div>
+            {submitStatus === 'success' && (
+              <p className="mt-3 text-xs font-mono text-emerald-400/80">
+                Request sent. This mission brief has been delivered to the owner.
+              </p>
+            )}
+            {submitStatus === 'error' && (
+              <p className="mt-3 text-xs font-mono text-red-400/80">
+                Something went wrong sending your request. Please try again or reach out directly.
+              </p>
+            )}
           </motion.div>
 
           {/* Budget Filtering */}
@@ -259,9 +293,10 @@ export default function ContactForm() {
           >
             <button
               type="submit"
-              className="group relative px-6 sm:px-8 py-3.5 sm:py-4 bg-safety-orange rounded-full text-white font-semibold text-sm uppercase tracking-wider overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_rgba(255,77,0,0.5)] active:scale-[0.98] flex items-center justify-center sm:justify-start gap-3 w-full sm:w-auto touch-manipulation"
+              disabled={isSubmitting}
+              className="group relative px-6 sm:px-8 py-3.5 sm:py-4 bg-safety-orange rounded-full text-white font-semibold text-sm uppercase tracking-wider overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_rgba(255,77,0,0.5)] active:scale-[0.98] flex items-center justify-center sm:justify-start gap-3 w-full sm:w-auto touch-manipulation disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <span className="relative z-10">Initialize Request</span>
+              <span className="relative z-10">{isSubmitting ? 'Sending…' : 'Initialize Request'}</span>
               <ChevronRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
               <Send className="absolute right-4 w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-4 transition-all" />
             </button>

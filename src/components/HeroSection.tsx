@@ -1,7 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import MagneticButton from './MagneticButton';
+import AnimatedGrid from './AnimatedGrid';
+import VideoLightbox from './VideoLightbox';
 import { ArrowRight, Play } from 'lucide-react';
 import { siteConfig } from '@/config/siteConfig';
 
@@ -33,6 +36,14 @@ const containerVariants = {
 };
 
 export default function HeroSection() {
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+
+  const scrollToContact = () => {
+    const section = document.getElementById('contact');
+    if (!section) return;
+    section.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <section className="relative h-screen w-full overflow-hidden">
       {/* Video Background */}
@@ -54,6 +65,9 @@ export default function HeroSection() {
         
         {/* Mesh gradient overlay */}
         <div className="absolute inset-0 mesh-bg opacity-60" />
+
+        {/* Animated Grid */}
+        <AnimatedGrid />
       </div>
 
       {/* Content */}
@@ -109,7 +123,10 @@ export default function HeroSection() {
           transition={{ delay: 1.4, duration: 0.6 }}
           className="mt-8 sm:mt-12 flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0"
         >
-          <MagneticButton className="group relative px-6 sm:px-8 py-3.5 sm:py-4 bg-safety-orange rounded-full text-white font-semibold text-sm uppercase tracking-wider overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_rgba(255,77,0,0.5)] w-full sm:w-auto justify-center">
+          <MagneticButton
+            onClick={scrollToContact}
+            className="group relative px-6 sm:px-8 py-3.5 sm:py-4 bg-safety-orange rounded-full text-white font-semibold text-sm uppercase tracking-wider overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_rgba(255,77,0,0.5)] w-full sm:w-auto justify-center"
+          >
             <span className="relative z-10 flex items-center gap-2">
               Get Started
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -117,7 +134,10 @@ export default function HeroSection() {
             <div className="absolute inset-0 bg-gradient-to-r from-safety-orange to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity" />
           </MagneticButton>
 
-          <MagneticButton className="group px-6 sm:px-8 py-3.5 sm:py-4 glass rounded-full text-foreground font-semibold text-sm uppercase tracking-wider glass-hover w-full sm:w-auto justify-center">
+          <MagneticButton
+            onClick={() => setIsVideoOpen(true)}
+            className="group px-6 sm:px-8 py-3.5 sm:py-4 glass rounded-full text-foreground font-semibold text-sm uppercase tracking-wider glass-hover w-full sm:w-auto justify-center"
+          >
             <span className="flex items-center gap-2">
               <Play className="w-4 h-4" />
               Watch Reel
@@ -167,6 +187,9 @@ export default function HeroSection() {
           <div>{brand.location.coordinates.lng}</div>
         </motion.div>
       </div>
+
+      {/* Video Lightbox */}
+      <VideoLightbox isOpen={isVideoOpen} onClose={() => setIsVideoOpen(false)} />
     </section>
   );
 }
