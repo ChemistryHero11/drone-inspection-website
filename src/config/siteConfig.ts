@@ -146,8 +146,8 @@ export const siteConfig = {
     ] as BudgetRange[],
   },
   contact: {
-    leadEmail: 'ops@skyhigh.io',
-    phoneNumber: '+1 (555) 123-4567',
+    leadEmail: 'nich_in_uscg@hotmail.com',
+    phoneNumber: '(305) 467-5796',
     showPhoneProminently: true,
     addressLines: ['1234 Innovation Blvd', 'San Francisco, CA 94105'],
     projectTypes: [
