@@ -4,24 +4,8 @@ import { useEffect, useState, useRef } from 'react';
 
 const CURSOR_STYLE_ID = 'custom-cursor-style';
 
-// Simple drone SVG as a data URI
-const DRONE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <g stroke="%23ff4d00" stroke-width="1.5" stroke-linecap="round">
-    <!-- Propellers -->
-    <ellipse cx="6" cy="8" rx="5" ry="2" opacity="0.6"/>
-    <ellipse cx="26" cy="8" rx="5" ry="2" opacity="0.6"/>
-    <ellipse cx="6" cy="24" rx="5" ry="2" opacity="0.6"/>
-    <ellipse cx="26" cy="24" rx="5" ry="2" opacity="0.6"/>
-    <!-- Arms -->
-    <line x1="10" y1="12" x2="14" y2="14"/>
-    <line x1="22" y1="12" x2="18" y2="14"/>
-    <line x1="10" y1="20" x2="14" y2="18"/>
-    <line x1="22" y1="20" x2="18" y2="18"/>
-    <!-- Body -->
-    <rect x="12" y="13" width="8" height="6" rx="2" fill="%23ff4d00" opacity="0.3"/>
-    <circle cx="16" cy="16" r="2" fill="%23ff4d00"/>
-  </g>
-</svg>`;
+// Drone SVG - clean version without comments
+const DRONE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none"><g stroke="%23ff4d00" stroke-width="1.5" stroke-linecap="round"><ellipse cx="6" cy="8" rx="5" ry="2" opacity="0.6"/><ellipse cx="26" cy="8" rx="5" ry="2" opacity="0.6"/><ellipse cx="6" cy="24" rx="5" ry="2" opacity="0.6"/><ellipse cx="26" cy="24" rx="5" ry="2" opacity="0.6"/><line x1="10" y1="12" x2="14" y2="14"/><line x1="22" y1="12" x2="18" y2="14"/><line x1="10" y1="20" x2="14" y2="18"/><line x1="22" y1="20" x2="18" y2="18"/><rect x="12" y="13" width="8" height="6" rx="2" fill="%23ff4d00" opacity="0.3"/><circle cx="16" cy="16" r="2" fill="%23ff4d00"/></g></svg>`;
 
 export default function CustomCursor() {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -31,28 +15,33 @@ export default function CustomCursor() {
   const smoothPosRef = useRef({ x: -100, y: -100 });
 
   useEffect(() => {
-    // Only enable on devices with mouse pointer AND large screens (no touch/mobile)
-    const hasPointer = window.matchMedia('(pointer: fine)').matches;
+    // Enable on large screens - mousemove events only fire with actual mouse anyway
     const isLargeScreen = window.matchMedia('(min-width: 768px)').matches;
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    // Simple mobile detection based on user agent
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    if (!hasPointer || !isLargeScreen || isTouchDevice) {
+    console.log('[CustomCursor]', { isLargeScreen, isMobile });
+
+    if (!isLargeScreen || isMobile) {
       setIsEnabled(false);
       return;
     }
 
     setIsEnabled(true);
 
-    // Inject global style to hide default cursor
+    // Hide default cursor while custom cursor is active
+    const previousCursor = document.body.style.cursor;
+    document.body.style.cursor = 'none';
+
+    // Inject global style to hide cursor for all elements as a fallback
     let styleEl = document.getElementById(CURSOR_STYLE_ID) as HTMLStyleElement | null;
     if (!styleEl) {
       styleEl = document.createElement('style');
       styleEl.id = CURSOR_STYLE_ID;
       styleEl.textContent = `
-        @media (pointer: fine) and (min-width: 768px) {
-          *, *::before, *::after {
-            cursor: none !important;
-          }
+        *, *::before, *::after {
+          cursor: none !important;
         }
       `;
       document.head.appendChild(styleEl);
@@ -98,6 +87,7 @@ export default function CustomCursor() {
       cancelAnimationFrame(animationId);
       const el = document.getElementById(CURSOR_STYLE_ID);
       if (el) el.remove();
+      document.body.style.cursor = previousCursor;
       window.removeEventListener('mousemove', moveCursor);
       window.removeEventListener('mousemove', handleElementHover);
     };
@@ -123,11 +113,14 @@ export default function CustomCursor() {
       }}
     >
       <div 
-        className="w-full h-full transition-transform duration-200"
+        className="w-full h-full rounded-full transition-transform duration-200"
         style={{
           transform: isHovering ? 'scale(1.2)' : 'scale(1)',
+          // Solid orange background so the cursor is always visible
+          backgroundColor: '#ff4d00',
           backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(DRONE_SVG)}")`,
           backgroundSize: 'contain',
+          backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
         }}
       />
