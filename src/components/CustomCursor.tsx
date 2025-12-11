@@ -13,15 +13,12 @@ export default function CustomCursor() {
   const ringPosRef = useRef({ x: -100, y: -100 });
 
   useEffect(() => {
-    // Only show on devices with fine pointer (mouse) and larger screens
+    // Log environment info, but always enable cursor on client
     const hasPointer = window.matchMedia('(pointer: fine)').matches;
     const isLargeScreen = window.matchMedia('(min-width: 768px)').matches;
-    
-    if (!hasPointer || !isLargeScreen) {
-      setIsEnabled(false);
-      return;
-    }
 
+    console.log('[CustomCursor] conditions', { hasPointer, isLargeScreen });
+    console.log('[CustomCursor] forcing enabled');
     setIsEnabled(true);
 
     // Inject global style to hide default cursor
