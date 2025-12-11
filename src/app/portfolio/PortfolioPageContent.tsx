@@ -20,21 +20,21 @@ const videos: VideoItem[] = [
     title: 'Construction Progression',
     description: 'Weekly aerial documentation of a commercial development project.',
     category: 'Progression',
-    videoSrc: '/DroneInspectionSiteCinematicHero.mp4',
+    videoSrc: '/construction.mp4',
   },
   {
     id: 'thermal-inspection',
     title: 'Thermal Roof Inspection',
     description: 'Infrared imaging reveals moisture intrusion on industrial facility.',
     category: 'Thermal',
-    videoSrc: '/DroneInspectionSiteCinematicHero.mp4',
+    videoSrc: '/thermal.mp4',
   },
   {
     id: 'industrial-survey',
     title: 'Industrial Site Survey',
     description: 'Complete aerial survey of a large industrial campus.',
     category: 'Survey',
-    videoSrc: '/DroneInspectionSiteCinematicHero.mp4',
+    videoSrc: '/industrial.mp4',
   },
 ];
 
@@ -43,15 +43,15 @@ const thermalComparisons = [
     id: 'roof-moisture',
     title: 'Roof Moisture Detection',
     description: 'Thermal imaging revealed significant moisture trapped beneath roofing membrane, preventing costly structural damage.',
-    beforeImage: '/placeholder-poster.jpg',
-    afterImage: '/placeholder-poster.jpg',
+    beforeImage: '/roof-standard.png',
+    afterImage: '/roof-thermal.png',
   },
   {
-    id: 'insulation-gaps',
-    title: 'Insulation Gap Analysis',
-    description: 'Identified heat loss areas in commercial building envelope, leading to 30% improvement in energy efficiency.',
-    beforeImage: '/placeholder-poster.jpg',
-    afterImage: '/placeholder-poster.jpg',
+    id: 'solar-analysis',
+    title: 'Solar Panel Efficiency',
+    description: 'Identified underperforming solar cells and connection hotspots, optimizing array output by 25%.',
+    beforeImage: '/solar-standard.png',
+    afterImage: '/solar-thermal.png',
   },
 ];
 
