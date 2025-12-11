@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Building2, Thermometer, Scan, Home, ArrowUpRight } from 'lucide-react';
 import { siteConfig } from '@/config/siteConfig';
+import Link from 'next/link';
 
 interface BentoItemProps {
   title: string;
@@ -16,6 +17,7 @@ interface BentoItemProps {
   hoveredItem: string | null;
   setHoveredItem: (item: string | null) => void;
   itemKey: string;
+  href: string;
 }
 
 function BentoItem({ 
@@ -28,22 +30,24 @@ function BentoItem({
   gradientClass,
   hoveredItem,
   setHoveredItem,
-  itemKey
+  itemKey,
+  href
 }: BentoItemProps) {
   const isHovered = hoveredItem === itemKey;
   const isDimmed = hoveredItem !== null && hoveredItem !== itemKey;
 
   return (
-    <motion.div
-      className={`group relative glass rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 ${className}`}
-      onMouseEnter={() => setHoveredItem(itemKey)}
-      onMouseLeave={() => setHoveredItem(null)}
-      animate={{
-        opacity: isDimmed ? 0.4 : 1,
-        scale: isHovered ? 1.02 : 1,
-      }}
-      transition={{ duration: 0.3 }}
-    >
+    <Link href={href} className="block h-full">
+      <motion.div
+        className={`group relative glass rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 ${className}`}
+        onMouseEnter={() => setHoveredItem(itemKey)}
+        onMouseLeave={() => setHoveredItem(null)}
+        animate={{
+          opacity: isDimmed ? 0.4 : 1,
+          scale: isHovered ? 1.02 : 1,
+        }}
+        transition={{ duration: 0.3 }}
+      >
       {/* Background Gradient */}
       <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${gradientClass || 'bg-gradient-to-br from-steel-blue/20 to-transparent'}`} />
       
@@ -106,7 +110,8 @@ function BentoItem({
           boxShadow: 'inset 0 0 0 1px rgba(255, 77, 0, 0.3)',
         }}
       />
-    </motion.div>
+      </motion.div>
+    </Link>
   );
 }
 
@@ -171,6 +176,7 @@ export default function BentoGrid() {
             gradientClass="bg-gradient-to-br from-steel-blue/30 via-steel-blue/10 to-transparent"
             hoveredItem={hoveredItem}
             setHoveredItem={setHoveredItem}
+            href="/services#construction"
           />
         </motion.div>
 
@@ -186,6 +192,7 @@ export default function BentoGrid() {
             gradientClass="bg-gradient-to-t from-red-600/20 via-orange-500/10 to-blue-600/10"
             hoveredItem={hoveredItem}
             setHoveredItem={setHoveredItem}
+            href="/services#thermal"
           />
         </motion.div>
 
@@ -199,6 +206,7 @@ export default function BentoGrid() {
             className="h-full"
             hoveredItem={hoveredItem}
             setHoveredItem={setHoveredItem}
+            href="/services#lidar"
           />
         </motion.div>
 
@@ -212,6 +220,7 @@ export default function BentoGrid() {
             className="h-full"
             hoveredItem={hoveredItem}
             setHoveredItem={setHoveredItem}
+            href="/services#roof"
           />
         </motion.div>
       </motion.div>

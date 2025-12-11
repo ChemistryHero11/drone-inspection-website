@@ -4,21 +4,43 @@ import { useEffect, useState, useRef } from 'react';
 
 const CURSOR_STYLE_ID = 'custom-cursor-style';
 
+// Simple drone SVG as a data URI
+const DRONE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <g stroke="%23ff4d00" stroke-width="1.5" stroke-linecap="round">
+    <!-- Propellers -->
+    <ellipse cx="6" cy="8" rx="5" ry="2" opacity="0.6"/>
+    <ellipse cx="26" cy="8" rx="5" ry="2" opacity="0.6"/>
+    <ellipse cx="6" cy="24" rx="5" ry="2" opacity="0.6"/>
+    <ellipse cx="26" cy="24" rx="5" ry="2" opacity="0.6"/>
+    <!-- Arms -->
+    <line x1="10" y1="12" x2="14" y2="14"/>
+    <line x1="22" y1="12" x2="18" y2="14"/>
+    <line x1="10" y1="20" x2="14" y2="18"/>
+    <line x1="22" y1="20" x2="18" y2="18"/>
+    <!-- Body -->
+    <rect x="12" y="13" width="8" height="6" rx="2" fill="%23ff4d00" opacity="0.3"/>
+    <circle cx="16" cy="16" r="2" fill="%23ff4d00"/>
+  </g>
+</svg>`;
+
 export default function CustomCursor() {
   const [isEnabled, setIsEnabled] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const ringRef = useRef<HTMLDivElement>(null);
-  const dotRef = useRef<HTMLDivElement>(null);
+  const droneRef = useRef<HTMLDivElement>(null);
   const posRef = useRef({ x: -100, y: -100 });
-  const ringPosRef = useRef({ x: -100, y: -100 });
+  const smoothPosRef = useRef({ x: -100, y: -100 });
 
   useEffect(() => {
-    // Log environment info, but always enable cursor on client
+    // Only enable on devices with mouse pointer AND large screens (no touch/mobile)
     const hasPointer = window.matchMedia('(pointer: fine)').matches;
     const isLargeScreen = window.matchMedia('(min-width: 768px)').matches;
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-    console.log('[CustomCursor] conditions', { hasPointer, isLargeScreen });
-    console.log('[CustomCursor] forcing enabled');
+    if (!hasPointer || !isLargeScreen || isTouchDevice) {
+      setIsEnabled(false);
+      return;
+    }
+
     setIsEnabled(true);
 
     // Inject global style to hide default cursor
@@ -27,25 +49,24 @@ export default function CustomCursor() {
       styleEl = document.createElement('style');
       styleEl.id = CURSOR_STYLE_ID;
       styleEl.textContent = `
-        *, *::before, *::after {
-          cursor: none !important;
+        @media (pointer: fine) and (min-width: 768px) {
+          *, *::before, *::after {
+            cursor: none !important;
+          }
         }
       `;
       document.head.appendChild(styleEl);
     }
 
-    // Animation loop for smooth ring following
+    // Animation loop for smooth following
     let animationId: number;
     const animate = () => {
-      // Lerp ring position towards cursor for smooth follow
-      ringPosRef.current.x += (posRef.current.x - ringPosRef.current.x) * 0.15;
-      ringPosRef.current.y += (posRef.current.y - ringPosRef.current.y) * 0.15;
+      // Lerp position for smooth follow
+      smoothPosRef.current.x += (posRef.current.x - smoothPosRef.current.x) * 0.2;
+      smoothPosRef.current.y += (posRef.current.y - smoothPosRef.current.y) * 0.2;
       
-      if (ringRef.current) {
-        ringRef.current.style.transform = `translate(${ringPosRef.current.x}px, ${ringPosRef.current.y}px)`;
-      }
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${posRef.current.x}px, ${posRef.current.y}px)`;
+      if (droneRef.current) {
+        droneRef.current.style.transform = `translate(${smoothPosRef.current.x}px, ${smoothPosRef.current.y}px)`;
       }
       
       animationId = requestAnimationFrame(animate);
@@ -86,44 +107,30 @@ export default function CustomCursor() {
     return null;
   }
 
-  const ringSize = isHovering ? 60 : 40;
-  const dotSize = isHovering ? 8 : 6;
+  const size = isHovering ? 48 : 32;
 
   return (
-    <>
-      {/* Outer glow ring */}
-      <div
-        ref={ringRef}
-        className="fixed top-0 left-0 pointer-events-none z-[10001] mix-blend-difference"
-        style={{ willChange: 'transform' }}
-      >
-        <div
-          className="rounded-full border-2 border-white transition-all duration-200"
-          style={{
-            width: ringSize,
-            height: ringSize,
-            marginLeft: -ringSize / 2,
-            marginTop: -ringSize / 2,
-          }}
-        />
-      </div>
-
-      {/* Inner dot */}
-      <div
-        ref={dotRef}
-        className="fixed top-0 left-0 pointer-events-none z-[10001]"
-        style={{ willChange: 'transform' }}
-      >
-        <div
-          className="rounded-full bg-safety-orange transition-all duration-150"
-          style={{
-            width: dotSize,
-            height: dotSize,
-            marginLeft: -dotSize / 2,
-            marginTop: -dotSize / 2,
-          }}
-        />
-      </div>
-    </>
+    <div
+      ref={droneRef}
+      className="fixed top-0 left-0 pointer-events-none z-[10001] transition-all duration-200"
+      style={{ 
+        willChange: 'transform',
+        width: size,
+        height: size,
+        marginLeft: -size / 2,
+        marginTop: -size / 2,
+        filter: isHovering ? 'drop-shadow(0 0 8px rgba(255, 77, 0, 0.8))' : 'drop-shadow(0 0 4px rgba(255, 77, 0, 0.5))',
+      }}
+    >
+      <div 
+        className="w-full h-full transition-transform duration-200"
+        style={{
+          transform: isHovering ? 'scale(1.2)' : 'scale(1)',
+          backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(DRONE_SVG)}")`,
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+        }}
+      />
+    </div>
   );
 }

@@ -91,18 +91,28 @@ export default function HeroSection() {
           initial="hidden"
           animate="visible"
         >
-          {headline.split('').map((char, index) => (
-            <motion.span
-              key={index}
-              variants={letterVariants}
-              custom={index}
-              className={char === ' ' ? 'inline-block w-4 sm:w-6 md:w-8' : 'inline-block'}
-              style={{
-                textShadow: '0 0 80px rgba(255, 77, 0, 0.3)',
-              }}
-            >
-              {char}
-            </motion.span>
+          {headline.split(' ').map((word, wordIndex) => (
+            <span key={wordIndex} className="inline-block whitespace-nowrap">
+              {word.split('').map((char, charIndex) => {
+                const globalIndex = headline.split(' ').slice(0, wordIndex).join(' ').length + (wordIndex > 0 ? 1 : 0) + charIndex;
+                return (
+                  <motion.span
+                    key={charIndex}
+                    variants={letterVariants}
+                    custom={globalIndex}
+                    className="inline-block"
+                    style={{
+                      textShadow: '0 0 80px rgba(255, 77, 0, 0.3)',
+                    }}
+                  >
+                    {char}
+                  </motion.span>
+                );
+              })}
+              {wordIndex < headline.split(' ').length - 1 && (
+                <span className="inline-block w-3 sm:w-5 md:w-7" />
+              )}
+            </span>
           ))}
         </motion.h1>
 
