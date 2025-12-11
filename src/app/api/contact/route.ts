@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     const { error } = await resend.emails.send({
       from: 'SkyHigh Imaging <onboarding@resend.dev>',
       to,
-      reply_to: email,
+      replyTo: email,
       subject,
       html,
     });
