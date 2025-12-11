@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 export default function CustomCursor() {
-  const [isMounted, setIsMounted] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const [hasPointer, setHasPointer] = useState(false);
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
@@ -16,15 +15,16 @@ export default function CustomCursor() {
   const cursorYSpring = useSpring(cursorY, springConfig);
 
   useEffect(() => {
-    setIsMounted(true);
+    // Only show on devices with fine pointer (mouse) and larger screens
+    const hasPointer = window.matchMedia('(pointer: fine)').matches;
+    const isLargeScreen = window.matchMedia('(min-width: 768px)').matches;
     
-    // Only show on devices with fine pointer (mouse)
-    const pointerCheck = window.matchMedia('(pointer: fine)').matches;
-    setHasPointer(pointerCheck);
-    if (!pointerCheck) return;
+    if (!hasPointer || !isLargeScreen) {
+      setIsEnabled(false);
+      return;
+    }
 
-    // Hide default cursor when custom cursor is active
-    document.body.style.cursor = 'none';
+    setIsEnabled(true);
 
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX);
@@ -54,7 +54,6 @@ export default function CustomCursor() {
     document.body.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
-      document.body.style.cursor = '';
       window.removeEventListener('mousemove', moveCursor);
       window.removeEventListener('mousemove', handleElementHover);
       document.body.removeEventListener('mouseenter', handleMouseEnter);
@@ -62,23 +61,32 @@ export default function CustomCursor() {
     };
   }, [cursorX, cursorY]);
 
-  // Don't render until mounted (prevents SSR hydration mismatch)
-  if (!isMounted || !hasPointer) {
+  // Don't render on touch devices or small screens
+  if (!isEnabled) {
     return null;
   }
 
   return (
     <>
+      {/* Global style to hide default cursor */}
+      <style jsx global>{`
+        @media (pointer: fine) and (min-width: 768px) {
+          *, *::before, *::after {
+            cursor: none !important;
+          }
+        }
+      `}</style>
+
       {/* Outer glow ring */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[10001] mix-blend-difference hidden md:block"
+        className="fixed top-0 left-0 pointer-events-none z-[10001] mix-blend-difference"
         style={{
           x: cursorXSpring,
           y: cursorYSpring,
         }}
       >
         <motion.div
-          className="rounded-full border border-white/30"
+          className="rounded-full border-2 border-white"
           animate={{
             width: isHovering ? 60 : 40,
             height: isHovering ? 60 : 40,
@@ -92,7 +100,7 @@ export default function CustomCursor() {
 
       {/* Inner dot */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[10001] hidden md:block"
+        className="fixed top-0 left-0 pointer-events-none z-[10001]"
         style={{
           x: cursorX,
           y: cursorY,

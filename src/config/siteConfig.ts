@@ -39,7 +39,7 @@ export const siteConfig = {
     badge: 'FAA Part 107 Certified',
     video: {
       src: '/DroneInspectionSiteCinematicHero.mp4',
-      poster: '/placeholder-poster.jpg',
+      poster: '',
     },
   },
   visuals: {
